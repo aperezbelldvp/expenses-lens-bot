@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())  // Identificador único en la BD
+  telegramId    BigInt   @unique              // ID único de Telegram
+  isBot         Boolean  @default(false)      // Indica si es un bot
+  firstName     String                          // Nombre del usuario
+  lastName      String?                         // Apellido (puede contener emojis)
+  username      String?  @unique                // Nombre de usuario de Telegram
+  languageCode  String?                          // Código de idioma del usuario (ej: "es", "en")
+
+  createdAt     DateTime @default(now())        // Fecha de registro
+  updatedAt     DateTime @updatedAt             // Última modificación (actualiza automáticamente)
+  lastActiveAt  DateTime @default(now())        // Última conexión
+}

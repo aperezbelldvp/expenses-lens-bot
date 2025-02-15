@@ -4,9 +4,22 @@
   "description": "Bot de telegram para llevar un control de los gastos en el supermercado. Creado con NodeJS y Express usando Typescript",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
+    "dev": "cross-env NODE_ENV=development nodemon --watch src --ext ts --exec ts-node src/index.ts",
+    "test": "cross-env NODE_ENV=test jest",
+    "db:start": "docker-compose up -d",
+    "db:stop": "docker-compose down",
+    "db:restart": "docker-compose down && docker-compose up -d",
+    "db:logs": "docker-compose logs -f",
+    "db:migrate": "dotenv -e .env.development -- npx prisma migrate dev",
+    "db:migrate:test": "dotenv -e .env.test -- npx prisma migrate dev",
+    "db:migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
+    "db:reset": "dotenv -e .env.development -- npx prisma migrate reset --force",
+    "db:reset:test": "dotenv -e .env.test -- npx prisma migrate reset --force",
+    "studio": "dotenv -e .env.development -- npx prisma studio",
+    "studio:test": "dotenv -e .env.test -- npx prisma studio",
+    "studio:prod": "dotenv -e .env.production -- npx prisma studio",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "cross-env NODE_ENV=production node build/index.js"
   },
   "repository": {
     "type": "git",
@@ -20,20 +33,26 @@
   },
   "homepage": "https://github.com/aperezbelldvp/expenses-lens-bot#readme",
   "dependencies": {
+    "@prisma/client": "^6.3.1",
     "@types/cors": "^2.8.17",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.0.0",
-    "supabase": "^2.12.1"
+    "supabase": "^2.12.1",
+    "telegraf": "^4.16.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.4",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.20.1",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.1",
+    "prisma": "^6.3.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
 }
