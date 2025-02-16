@@ -1,22 +1,21 @@
-import eslint from "@eslint/js";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
-import prettier from "eslint-plugin-prettier";
-import importPlugin from "eslint-plugin-import";
 import prettierConfig from "eslint-config-prettier";
+import importPlugin from "eslint-plugin-import";
+import prettier from "eslint-plugin-prettier";
 
 export default [
   {
-    files: ["src/**/*.{ts,js}"], // Aplica las reglas solo en `src/`
+    files: ["src/**/*.{ts,js}"],
     languageOptions: {
       ecmaVersion: "latest",
-      sourceType: "module",
+      sourceType: "commonjs",
       parser: tsParser,
     },
     plugins: {
       "@typescript-eslint": tseslint,
       prettier,
-      import: importPlugin, // Asegurar que `eslint-plugin-import` esté definido
+      import: importPlugin,
     },
     rules: {
       ...tseslint.configs.recommended.rules,
@@ -24,7 +23,7 @@ export default [
       "prettier/prettier": "error",
       "no-unused-vars": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
-      "import/order": ["warn", { "alphabetize": { "order": "asc" } }], // Ahora debería funcionar
+      "import/order": ["warn", { alphabetize: { order: "asc" } }],
     },
   },
 ];

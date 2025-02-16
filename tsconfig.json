@@ -7,6 +7,7 @@
     "allowJs": true, // Allows JavaScript files to be compiled alongside TypeScript files.
     "target": "ES2024", // Specifies the ECMAScript target version
     "module": "CommonJS", // Sets the module system to use (commonjs, nodenext, esnext)
+    "moduleResolution": "Node", // Specifies how modules are resolved
     "lib": ["ES2024"], // Specifies the library files to be included in the compilation.
     "sourceMap": true, // Generates source maps for debugging
     "skipLibCheck": true, // Skips type checking of declaration files

@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Bot de telegram para llevar un control de los gastos en el supermercado. Creado con NodeJS y Express usando Typescript",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --watch src --ext ts --exec ts-node src/index.ts",
     "test": "cross-env NODE_ENV=test jest",
@@ -21,9 +20,9 @@
     "studio:prod": "dotenv -e .env.production -- npx prisma studio",
     "build": "tsc",
     "start": "cross-env NODE_ENV=production node dist/index.js",
-    "lint": "eslint \"src/**/*.{js,ts}\"",
-    "lint:fix": "eslint \"src/**/*.{js,ts}\" --fix",
-    "format": "prettier --write 'src/**/*.{js,ts}'"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
