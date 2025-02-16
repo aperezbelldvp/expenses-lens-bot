@@ -1,6 +1,7 @@
 import { Context } from "telegraf";
-import { UserService } from "../services/UserService";
 import { User } from "../models/User";
+import { UserService } from "../services/UserService";
+import logger from "../utils/logger";
 
 export class UserController {
   private userService: UserService;
@@ -11,6 +12,7 @@ export class UserController {
 
   async handleNewMessage(ctx: Context): Promise<void> {
     try {
+      logger.info("📤 Mensaje recibido: ", ctx.message)
       const user = ctx.from;
       if (!user) return;
 
@@ -31,3 +33,6 @@ export class UserController {
     }
   }
 }
+
+
+

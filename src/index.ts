@@ -1,8 +1,9 @@
-import databaseClient from "./database/database";
-import bot from "./telegram/bot";
 import { UserController } from "./controllers/UserController";
-import { UserService } from "./services/UserService";
+import databaseClient from "./database/database";
 import { PostgreSQLUserRepository } from "./repositories/PostgreSQLUserRepository";
+import { UserService } from "./services/UserService";
+import bot from "./telegram/bot";
+import logger from "./utils/logger";
 
 // Inyectamos dependencias
 const userRepository = new PostgreSQLUserRepository();
@@ -12,20 +13,25 @@ const userController = new UserController(userService);
 const startBot = async () => {
   await databaseClient.connect();
 
-  console.log("🤖 Telegram bot is running...");
+  logger.info("🤖 Telegram bot is running...");
 
-  // 🛑 Primero, limpiamos eventos previos antes de registrar nuevos
+  // Limpiamos eventos previos antes de registrar nuevos, evita duplicidad
   bot.telegram.getMe().then((botInfo) => {
-    console.log(`✅ Bot conectado: ${botInfo.username}`);
+    logger.info(`✅ Bot conectado: ${botInfo.username}`);
   });
 
-  // bot.removeListener("message", userController.handleNewMessage); // 🛑 Esto elimina duplicaciones
   bot.on("message", async (ctx) => userController.handleNewMessage(ctx));
 
   await bot.launch();
 
-  process.once("SIGINT", () => bot.stop("SIGINT"));
-  process.once("SIGTERM", () => bot.stop("SIGTERM"));
+  process.once("SIGINT", () => {
+    logger.warn("⛔ Bot stopped due to SIGINT");
+    bot.stop("SIGINT")
+  });
+  process.once("SIGTERM", () => {
+    logger.warn("⛔ Bot stopped due to SIGTERM");
+    bot.stop("SIGTERM")
+  });
 };
 
 startBot();

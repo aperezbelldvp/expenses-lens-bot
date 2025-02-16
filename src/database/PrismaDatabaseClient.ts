@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { IDatabaseClient } from "../interfaces/IDatabaseClient";
+import logger from "../utils/logger";
 
 export class PrismaDatabaseClient implements IDatabaseClient {
     private prisma: PrismaClient;
@@ -10,12 +11,12 @@ export class PrismaDatabaseClient implements IDatabaseClient {
 
     async connect(): Promise<void> {
         await this.prisma.$connect();
-        console.log("✅ Connected to the database using Prisma.");
+        logger.info("✅ Connected to the database using Prisma.");
     }
 
     async disconnect(): Promise<void> {
         await this.prisma.$disconnect();
-        console.log("❌ Disconnected from the database.");
+        logger.info("❌ Disconnected from the database.");
     }
 
     async findOne<T>(table: string, where: object): Promise<T | null> {
@@ -36,12 +37,12 @@ export class PrismaDatabaseClient implements IDatabaseClient {
 
     async upsert<T>(table: string, where: object, data: object): Promise<T> {
         return (this.prisma as any)[table].upsert({
-          where,
-          update: data,
-          create: { ...where, ...data },
+            where,
+            update: data,
+            create: { ...where, ...data },
         });
-      }
-      
+    }
+
 
     async delete<T>(table: string, where: object): Promise<void> {
         await (this.prisma as any)[table].delete({ where });
