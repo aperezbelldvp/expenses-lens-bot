@@ -1,24 +1,19 @@
-import { NextFunction, Request, Response } from "express";
-import { AppError } from "../utils/AppError";
+import { Request, Response, NextFunction } from "express";
 import logger from "../utils/logger";
 
-// Middleware global de manejo de errores
-const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
-  let { statusCode, message } = err as AppError;
+// Middleware para manejar errores
+const errorMiddleware = (err: any, req?: Request, res?: Response, next?: NextFunction) => {
+  logger.error(`❌ Error: ${err.message || "Unknown error"}`);
 
-  if (!(err instanceof AppError)) {
-    statusCode = 500;
-    message = "❌ Error interno del servidor.";
+  // Si el error viene de una solicitud HTTP, responder con JSON
+  if (res && req) {
+    res.status(err.status || 500).json({
+      message: err.message || "Internal Server Error",
+      stack: process.env["NODE_ENV"] === "development" ? err.stack : undefined,
+    });
+  } else {
+    logger.error("⚠️ Error:", err);
   }
-
-  // Log del error (en producción se puede guardar en archivos)
-  logger.error(`🚨 Error: ${message} - Status: ${statusCode} - URL: ${req.originalUrl}`);
-
-  return res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
 };
 
 export default errorMiddleware;

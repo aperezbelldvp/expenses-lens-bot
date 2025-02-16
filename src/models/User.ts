@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 export class User {
   constructor(
     public telegramId: bigint,

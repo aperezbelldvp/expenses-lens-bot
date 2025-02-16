@@ -3,14 +3,14 @@ import { User } from "../models/User";
 import { UserService } from "../services/UserService";
 import logger from "../utils/logger";
 
-export class UserController {
-  private userService: UserService;
+export class StartController {
+  private readonly userService: UserService;
 
   constructor(userService: UserService) {
     this.userService = userService;
   }
 
-  async handleNewMessage(ctx: Context): Promise<void> {
+  async handlerStartCommand(ctx: Context): Promise<void> {
     try {
       logger.debug(`📤 Mensaje recibido: ${JSON.stringify(ctx.message)}`);
       const user = ctx.from;
@@ -26,7 +26,9 @@ export class UserController {
       );
 
       await this.userService.registerOrUpdateUser(userData);
-      ctx.reply(`👋 ¡Hola, ${user.first_name}! Ya estás registrado.`);
+      ctx.reply(
+        `👋 ¡Hola, ${user.first_name}! Bienvenido a ExpenseLensBot, usa /help para ver los comandos disponibles.`,
+      );
     } catch (error) {
       console.error("❌ Error al registrar usuario:", error);
       ctx.reply("❌ Ocurrió un error registrando tu usuario. Inténtalo de nuevo más tarde.");

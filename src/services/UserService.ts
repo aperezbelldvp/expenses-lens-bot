@@ -1,7 +1,6 @@
 import { IUserRepository } from "../interfaces/IUserRepository";
 import { User } from "../models/User";
 
-// eslint-disable-next-line no-unused-vars
 export class UserService {
   constructor(private readonly userRepository: IUserRepository) {}
 

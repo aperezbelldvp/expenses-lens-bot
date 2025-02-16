@@ -1,37 +1,15 @@
-import { UserController } from "./controllers/UserController";
 import databaseClient from "./database/database";
-import { PostgreSQLUserRepository } from "./repositories/PostgreSQLUserRepository";
-import { UserService } from "./services/UserService";
-import bot from "./telegram/bot";
-import logger from "./utils/logger";
+import errorMiddleware from "./middlewares/errorMiddleware";
+import { startBot } from "./telegram/bot";
 
-// Inyectamos dependencias
-const userRepository = new PostgreSQLUserRepository();
-const userService = new UserService(userRepository);
-const userController = new UserController(userService);
-
-const startBot = async () => {
-  await databaseClient.connect();
-
-  logger.info("🤖 Telegram bot is running...");
-
-  // Limpiamos eventos previos antes de registrar nuevos, evita duplicidad
-  bot.telegram.getMe().then((botInfo) => {
-    logger.info(`✅ Bot conectado: ${botInfo.username}`);
-  });
-
-  bot.on("message", async (ctx) => userController.handleNewMessage(ctx));
-
-  await bot.launch();
-
-  process.once("SIGINT", () => {
-    logger.warn("⛔ Bot stopped due to SIGINT");
-    bot.stop("SIGINT");
-  });
-  process.once("SIGTERM", () => {
-    logger.warn("⛔ Bot stopped due to SIGTERM");
-    bot.stop("SIGTERM");
-  });
+const startService = async () => {
+  try {
+    await databaseClient.connect();
+    await startBot();
+  } catch (error) {
+    errorMiddleware(error);
+    process.exit(1); // Cierra el proceso si hay un error crítico
+  }
 };
 
-startBot();
+startService();
