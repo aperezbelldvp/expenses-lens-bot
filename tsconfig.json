@@ -3,7 +3,7 @@
     "incremental": true, // Enables incremental compilation, build only the changed code
     "strict": true, // Enables all strict type-checking options (best practice)
     "rootDir": "src", // Root directory of input files
-    "outDir": "./build", // Output directory for compiled files
+    "outDir": "./dist", // Output directory for compiled files
     "allowJs": true, // Allows JavaScript files to be compiled alongside TypeScript files.
     "target": "ES2024", // Specifies the ECMAScript target version
     "module": "CommonJS", // Sets the module system to use (commonjs, nodenext, esnext)
@@ -24,5 +24,5 @@
     "declaration": true // Generates corresponding .d.ts file
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "build", "dist", "tests/**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "tests/**/*.test.ts"]
 }

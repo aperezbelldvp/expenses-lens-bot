@@ -19,7 +19,7 @@
     "studio:test": "dotenv -e .env.test -- npx prisma studio",
     "studio:prod": "dotenv -e .env.production -- npx prisma studio",
     "build": "tsc",
-    "start": "cross-env NODE_ENV=production node build/index.js"
+    "start": "cross-env NODE_ENV=production node dist/index.js"
   },
   "repository": {
     "type": "git",

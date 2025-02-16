@@ -12,7 +12,7 @@ export class UserController {
 
   async handleNewMessage(ctx: Context): Promise<void> {
     try {
-      logger.info("📤 Mensaje recibido: ", ctx.message)
+      logger.debug(`📤 Mensaje recibido: ${JSON.stringify(ctx.message)}`);
       const user = ctx.from;
       if (!user) return;
 
