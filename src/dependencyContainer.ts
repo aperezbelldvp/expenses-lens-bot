@@ -1,9 +1,11 @@
+import { DeleteController } from "./controllers/DeleteController";
 import { StartController } from "./controllers/StartController";
-import { PostgreSQLUserRepository } from "./repositories/PostgreSQLUserRepository";
+import { UserRepository } from "./repositories/UserRepository";
 import { UserService } from "./services/UserService";
 
-const userRepository = new PostgreSQLUserRepository();
+const userRepository = new UserRepository();
 const userService = new UserService(userRepository);
 const startController = new StartController(userService);
+const deleteController = new DeleteController(userService);
 
-export { startController };
+export { startController, deleteController };

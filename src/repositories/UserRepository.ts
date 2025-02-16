@@ -1,15 +1,17 @@
 import databaseClient from "../database/database";
 import { IUserRepository } from "../interfaces/IUserRepository";
 import { User } from "../models/User";
+import { NotFoundError } from "../utils/AppError";
 
-export class PostgreSQLUserRepository implements IUserRepository {
-  async findByTelegramId(telegramId: bigint): Promise<User | null> {
+export class UserRepository implements IUserRepository {
+  async findByTelegramId(telegramId: number): Promise<User | null> {
     const user = await databaseClient.findOne<User>("user", { telegramId });
 
     if (!user) return null;
 
+    console.log(user);
     return new User(
-      BigInt(user.telegramId),
+      user.telegramId,
       user.isBot,
       user.firstName,
       user.lastName,
@@ -33,9 +35,8 @@ export class PostgreSQLUserRepository implements IUserRepository {
         lastActiveAt: new Date(),
       },
     );
-
     return new User(
-      BigInt(newUser.telegramId),
+      newUser.telegramId,
       newUser.isBot,
       newUser.firstName,
       newUser.lastName,
@@ -45,5 +46,9 @@ export class PostgreSQLUserRepository implements IUserRepository {
       newUser.updatedAt,
       newUser.lastActiveAt,
     );
+  }
+
+  async deleteUser(telegramId: number): Promise<void> {
+    await databaseClient.delete("user", { telegramId });
   }
 }

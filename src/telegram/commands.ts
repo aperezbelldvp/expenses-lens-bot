@@ -1,12 +1,13 @@
 import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
-import { startController } from "../dependencyContainer";
+import { deleteController, startController } from "../dependencyContainer";
 import { helpHandler } from "./handlers/helpHandler";
 
 // Asociamos comandos con controllers
 const commands = {
-  start: (ctx: Context<Update>) => startController.handlerStartCommand(ctx), // 👈 Usamos función flecha
+  start: (ctx: Context<Update>) => startController.handlerStartCommand(ctx),
   help: helpHandler,
+  delete: (ctx: Context<Update>) => deleteController.handlerDeleteCommand(ctx),
 };
 
 // Registrar automáticamente todos los comandos

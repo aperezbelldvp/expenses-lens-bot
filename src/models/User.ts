@@ -1,6 +1,6 @@
 export class User {
   constructor(
-    public telegramId: bigint,
+    public telegramId: number,
     public isBot: boolean,
     public firstName: string,
     public lastName?: string | null,

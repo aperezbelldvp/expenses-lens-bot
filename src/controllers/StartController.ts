@@ -17,7 +17,7 @@ export class StartController {
       if (!user) return;
 
       const userData = new User(
-        BigInt(user.id),
+        user.id,
         user.is_bot,
         user.first_name,
         user.last_name || null,
@@ -30,8 +30,8 @@ export class StartController {
         `👋 ¡Hola, ${user.first_name}! Bienvenido a ExpenseLensBot, usa /help para ver los comandos disponibles.`,
       );
     } catch (error) {
-      console.error("❌ Error al registrar usuario:", error);
-      ctx.reply("❌ Ocurrió un error registrando tu usuario. Inténtalo de nuevo más tarde.");
+      logger.error("❌ Error registering user: ", error);
+      ctx.reply("Ocurrió un error registrando tu usuario. Inténtalo de nuevo más tarde.");
     }
   }
 }
