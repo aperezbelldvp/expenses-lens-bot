@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Bot de telegram para llevar un control de los gastos en el supermercado. Creado con NodeJS y Express usando Typescript",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --watch src --ext ts --exec ts-node src/index.ts",
     "test": "cross-env NODE_ENV=test jest",
@@ -19,7 +20,10 @@
     "studio:test": "dotenv -e .env.test -- npx prisma studio",
     "studio:prod": "dotenv -e .env.production -- npx prisma studio",
     "build": "tsc",
-    "start": "cross-env NODE_ENV=production node dist/index.js"
+    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "lint": "eslint \"src/**/*.{js,ts}\"",
+    "lint:fix": "eslint \"src/**/*.{js,ts}\" --fix",
+    "format": "prettier --write 'src/**/*.{js,ts}'"
   },
   "repository": {
     "type": "git",
@@ -48,8 +52,16 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.4",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.20.1",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-promise": "^7.2.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.1",
     "prisma": "^6.3.1",

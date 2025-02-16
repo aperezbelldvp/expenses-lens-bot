@@ -1,5 +1,5 @@
-import dotenv from "dotenv";
 import path from "path";
+import dotenv from "dotenv";
 
 // Determina el archivo .env a cargar según NODE_ENV
 const envFile = `.env.${process.env["NODE_ENV"] || "development"}`;

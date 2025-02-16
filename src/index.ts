@@ -26,11 +26,11 @@ const startBot = async () => {
 
   process.once("SIGINT", () => {
     logger.warn("⛔ Bot stopped due to SIGINT");
-    bot.stop("SIGINT")
+    bot.stop("SIGINT");
   });
   process.once("SIGTERM", () => {
     logger.warn("⛔ Bot stopped due to SIGTERM");
-    bot.stop("SIGTERM")
+    bot.stop("SIGTERM");
   });
 };
 

@@ -22,7 +22,7 @@ export class UserController {
         user.first_name,
         user.last_name || null,
         user.username || null,
-        user.language_code || null
+        user.language_code || null,
       );
 
       await this.userService.registerOrUpdateUser(userData);
@@ -33,6 +33,3 @@ export class UserController {
     }
   }
 }
-
-
-

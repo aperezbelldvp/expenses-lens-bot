@@ -1,10 +1,10 @@
+import databaseClient from "../database/database";
 import { IUserRepository } from "../interfaces/IUserRepository";
 import { User } from "../models/User";
-import databaseClient from "../database/database";
 
 export class PostgreSQLUserRepository implements IUserRepository {
   async findByTelegramId(telegramId: bigint): Promise<User | null> {
-    const user = await databaseClient.findOne<any>("user", { telegramId });
+    const user = await databaseClient.findOne<User>("user", { telegramId });
 
     if (!user) return null;
 
@@ -17,12 +17,12 @@ export class PostgreSQLUserRepository implements IUserRepository {
       user.languageCode,
       user.createdAt,
       user.updatedAt,
-      user.lastActiveAt
+      user.lastActiveAt,
     );
   }
 
   async createOrUpdateUser(user: User): Promise<User> {
-    const newUser = await databaseClient.upsert<any>(
+    const newUser = await databaseClient.upsert<User>(
       "user",
       { telegramId: user.telegramId },
       {
@@ -31,7 +31,7 @@ export class PostgreSQLUserRepository implements IUserRepository {
         username: user.username,
         languageCode: user.languageCode,
         lastActiveAt: new Date(),
-      }
+      },
     );
 
     return new User(
@@ -43,7 +43,7 @@ export class PostgreSQLUserRepository implements IUserRepository {
       newUser.languageCode,
       newUser.createdAt,
       newUser.updatedAt,
-      newUser.lastActiveAt
+      newUser.lastActiveAt,
     );
   }
 }
