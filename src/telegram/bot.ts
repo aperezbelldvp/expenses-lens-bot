@@ -3,6 +3,8 @@ import config from "../config";
 import errorMiddleware from "../middlewares/errorMiddleware";
 import logger from "../utils/logger";
 import { registerCommands } from "./commands";
+import { registerDocument, registerMessage } from "./messages";
+import { contextMiddleware } from "../middlewares/contextMiddleware";
 
 const bot = new Telegraf(config.TELEGRAM_BOT_TOKEN);
 
@@ -14,11 +16,16 @@ export const startBot = async () => {
     const botInfo = await bot.telegram.getMe();
     logger.info(`✅ Bot conectado: ${botInfo.username}`);
 
-    // Registrar comandos
+    bot.use(contextMiddleware);
+
+    // Comandos
     registerCommands(bot);
 
+    // Fotos o PDF
+    registerDocument(bot)
+
     // Mensajes
-    // bot.on("message", async (ctx) => messageHandler);
+    registerMessage(bot);
 
     await bot.launch();
     logger.info("🚀 Bot successfully launched!");
