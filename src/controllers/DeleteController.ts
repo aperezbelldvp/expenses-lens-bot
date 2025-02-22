@@ -17,9 +17,9 @@ export class DeleteController {
       if (!telegramId) throw new Error("No telegram Id.");
       await this.userService.deleteUser(telegramId);
 
-      ctx.reply("✅ Tu usuario ha sido eliminado correctamente.");
+      ctx.reply("Tu usuario ha sido eliminado correctamente.");
     } catch (error: any) {
-      logger.error(`❌ Error eliminando usuario: ${error}`);
+      logger.error(`Error eliminando usuario: ${error}`);
       errorMiddleware(error, undefined, undefined, undefined, ctx);
     }
   }
