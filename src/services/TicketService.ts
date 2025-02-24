@@ -1,11 +1,14 @@
+import { IAIService } from "../interfaces/IAIService";
 import { IOCRService } from "../interfaces/IOCRService";
 import logger from "../utils/logger";
 
 export class TicketService {
     private readonly ocrService: IOCRService;
+    private readonly aiService: IAIService;
 
-    constructor(ocrService: IOCRService) {
+    constructor(ocrService: IOCRService, aiService: IAIService) {
         this.ocrService = ocrService;
+        this.aiService = aiService;
     }
 
     async processTicket(imageUrl: string): Promise<string> {
@@ -16,7 +19,8 @@ export class TicketService {
 
         // En este punto, podemos aplicar procesamiento del texto extraído
         logger.info(`Info extract with OCR:\n${extractedText}`);
+        const processIAData = await this.aiService.analyzeReceipt(extractedText);
 
-        return extractedText;
+        return JSON.stringify(processIAData);
     }
 }
