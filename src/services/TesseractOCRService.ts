@@ -21,16 +21,21 @@ export class TesseractOCRService implements IOCRService {
       fs.unlinkSync(imagePath);
 
       return data.text;
-    } catch (error: any) {
-      logger.error(`OCR error: ${error.message}`);
-      throw new OCRProcessingError("OCR processing failed. Please try again.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        logger.error(`OCR error: ${error.message}`);
+        throw new OCRProcessingError("OCR processing failed. Please try again.");
+      } else {
+        logger.error(`OCR error: ${error}`);
+        throw new OCRProcessingError("OCR processing failed. Please try again.");
+      }
     }
   }
 }
 
 class OCRProcessingError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "OCRProcessingError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = "OCRProcessingError";
+  }
 }

@@ -19,7 +19,7 @@ export class TicketService {
 
         // En este punto, podemos aplicar procesamiento del texto extraído
         logger.info(`Info extract with OCR:\n${extractedText}`);
-        const processIAData = await this.aiService.analyzeReceipt(extractedText);
+        const processIAData = await this.aiService.analyzeReceipt(JSON.stringify(extractedText));
 
         return JSON.stringify(processIAData);
     }
