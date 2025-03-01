@@ -2,7 +2,7 @@ import fs from "fs";
 import Tesseract from "tesseract.js";
 import { IOCRService } from "../interfaces/IOCRService";
 import logger from "../utils/logger";
-import { ImageService } from "./ImageService";
+import { DownloadImageService } from "./DownloadImageService";
 
 export class TesseractOCRService implements IOCRService {
   async extractText(imageUrl: string): Promise<string> {
@@ -10,7 +10,7 @@ export class TesseractOCRService implements IOCRService {
       logger.info(`Downloading image: ${imageUrl}`);
 
       // Descargar la imagen y guardarla temporalmente
-      const imagePath = await ImageService.downloadImage(imageUrl);
+      const imagePath = await DownloadImageService.downloadImage(imageUrl);
 
       // Procesar la imagen con OCR
       const { data } = await Tesseract.recognize(imagePath, "spa", {

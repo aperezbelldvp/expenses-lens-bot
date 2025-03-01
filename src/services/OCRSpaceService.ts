@@ -1,7 +1,7 @@
 import { ocrSpace } from "ocr-space-api-wrapper";
 import { IOCRService } from "../interfaces/IOCRService";
 import logger from "../utils/logger";
-import { ImageService } from "./ImageService";
+import { DownloadImageService } from "./DownloadImageService";
 import fs from 'fs';
 
 
@@ -11,7 +11,7 @@ export class OCRSpaceService implements IOCRService {
             logger.info(`Downloading image: ${imageUrl}`);
       
             // Descargar la imagen y guardarla temporalmente
-            const imagePath = await ImageService.downloadImage(imageUrl);
+            const imagePath = await DownloadImageService.downloadImage(imageUrl);
 
             const OCRSpaceApiKey = process.env["OCRSpace_API_KEY"];
             if(!OCRSpaceApiKey) throw new Error("No OCR Space API Key found");

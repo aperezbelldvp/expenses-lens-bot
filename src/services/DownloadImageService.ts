@@ -3,13 +3,18 @@ import fs from "fs";
 import path from "path";
 import logger from "../utils/logger";
 
-export class ImageService {
+export class DownloadImageService {
     static async downloadImage(imageUrl: string): Promise<string> {
         try {
             const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
             const buffer = Buffer.from(response.data, "binary");
 
-            const imagePath = path.join(__dirname, "..", "..", "temp", `ticket_${Date.now()}.jpg`);
+            const tempDir = path.join(__dirname, "..", "..", "temp");
+            if (!fs.existsSync(tempDir)) {
+                fs.mkdirSync(tempDir);
+            }
+
+            const imagePath = path.join(tempDir, `ticket_${Date.now()}.jpg`);
             fs.writeFileSync(imagePath, buffer);
 
             logger.info(`Image saved: ${imagePath}`);
