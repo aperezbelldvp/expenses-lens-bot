@@ -1,58 +1,59 @@
 export const receiptPrompt = (text: string): string => `
 Tienes un texto extraído de un ticket de compra.  
-Tu tarea es extraer la información correctamente siguiendo estas reglas:  
+Tu tarea es analizarlo y extraer correctamente la información en JSON siguiendo estas reglas:
 
 🔹 **Reglas para extraer los productos correctamente:**  
-1️⃣ **El primer número SIEMPRE indica la cantidad de productos, el resto es el nombre del producto, aunque incluya números**  
-   - Puede ser parte del nombre del producto.  
-   - Por ejemplo, "1 5 BOCADILLOS" significa "1 unidad del producto llamado '5 bocadillos'".  
+1️⃣ **La estructura del ticket puede variar, pero en general sigue este orden:**  
+   - Cantidad del producto  
+   - Precio unitario (PVP o P. Unit)  
+   - Nombre del producto  
+   - Precio total del producto  
 
-2️⃣ **Si hay un precio a la derecha, y un número aislado ANTES del nombre del producto, ese número es la cantidad.**  
-   - Ejemplo: "2 PAN DE MOLDE 1,50" significa que se compraron 2 unidades de "PAN DE MOLDE" a 1,50€ cada una.  
-   - Pero "1 5 BOCADILLOS 1,19" significa que se compró **1 unidad** de un paquete de 5 bocadillos por 1,19€.  
+2️⃣ **El importe total de cada producto aparece en la última columna.**  
+   - 📌 **El precio unitario es el que aparece en la columna PVP/P. Unit.**  
+   - 📌 **Si la cantidad del producto es mayor a 1, el total es precio_unitario * cantidad.**  
+   - 📌 **Si no hay una cantidad explícita, asume que es 1 unidad.**  
+   
+3️⃣ **Ejemplo correcto de extracción de productos:**  
+   **Si el ticket tiene:**  
+   \`\`\`
+   Cant PVP Descripción Artículo Importe
+   2   1,10   CABALLA EN SALSA  2,20
+   1   2,90   +PROT CHOCO-NATA  2,90
+   \`\`\`
+   **Debe extraerse:**  
+   \`\`\`json
+   {
+     "productos": [
+       { "cantidad": 2, "nombre": "CABALLA EN SALSA", "precio_unitario": "1,10€", "precio_total": "2,20€", "categoria": "Alimentación" },
+       { "cantidad": 1, "nombre": "+PROT CHOCO-NATA", "precio_unitario": "2,90€", "precio_total": "2,90€", "categoria": "Alimentación" }
+     ]
+   }
+   \`\`\`
 
-3️⃣ **Identificación correcta de los precios:**  
-   - Si en la línea hay **cantidad + producto + precio**, ese precio es el **total** del producto.  
-   - Si hay una **columna de "P. Unit" y otra de "Importe"**, el primer precio es el unitario y el segundo es el total.  
-   - **Ejemplo:**  
+4️⃣ **Cálculo del subtotal, IVA y total:**  
+   - 📌 **El subtotal es la suma de las bases imponibles (sin IVA).**  
+   - 📌 **El IVA total es la suma de las cuotas de IVA.**  
+   - 📌 **El total es la suma del subtotal + IVA.**  
+   - 📌 **Es muy importante que siempre te fies del total del ticket, no lo recalcules tú.** 
+   - Ejemplo:  
      \`\`\`
-     Descripción        P. Unit    Importe
-     1 +PROT CHOCO-NATA  2,90       2,90
-     2 LECHE DESN        0,79       1,58
-     1 CRUNCHY PICANTE   1,00       1,00
+     BASE (€) I.V.A (%) Cuota I.V.A (€)
+     6,76    10%      0,68
+     3,00    21%      0,63
+     0,60    2%       0,01
      \`\`\`
-     **Debe extraerse así:**  
+     **Salida JSON correcta:**  
      \`\`\`json
      {
-       "productos": [
-         { "cantidad": 1, "nombre": "+PROT CHOCO-NATA", "precio_unitario": "2,90€", "precio_total": "2,90€", "categoria": "Alimentación" },
-         { "cantidad": 2, "nombre": "LECHE DESN", "precio_unitario": "0,79€", "precio_total": "1,58€", "categoria": "Alimentación" },
-         { "cantidad": 1, "nombre": "CRUNCHY PICANTE", "precio_unitario": "1,00€", "precio_total": "1,00€", "categoria": "Alimentación" }
-       ]
+       "subtotal": "10,36€",
+       "iva": "1,32€",
+       "total": "11,68€"
      }
      \`\`\`
 
-4️⃣ **Cálculo del subtotal, IVA y total:**  
-   - 📌 **El "total" ya incluye el IVA, NO lo sumes de nuevo.**  
-   - 📌 **El subtotal es la base imponible (total sin IVA).**  
-   - 📌 **El IVA es la diferencia entre el total y el subtotal.**  
-   - Ejemplo:  
-     - Si el ticket dice:  
-       \`\`\`
-       TOTAL (€) 1,60  
-       BASE IMPONIBLE 1,54  
-       IVA 0,06  
-       \`\`\`
-     - La salida correcta debe ser:  
-       \`\`\`json
-       {
-         "subtotal": "1,54€",
-         "iva": "0,06€",
-         "total": "1,60€"
-       }
-       \`\`\`
-
-5️⃣ **El JSON de salida debe tener este formato:**  
+5️⃣ **Formato de salida JSON esperado:**  
+\`\`\`json
 {
   "subtotal": "XX.XX€",
   "iva": "XX.XX€",
@@ -62,22 +63,7 @@ Tu tarea es extraer la información correctamente siguiendo estas reglas:
     { "cantidad": X, "nombre": "Producto2", "precio_unitario": "X.XX€", "precio_total": "X.XX€", "categoria": "Categoría" }
   ]
 }
-
-📌 **Ejemplo correcto:**  
-Si en el ticket aparece: 
-TOTAL (€) 23,91
-BASE IMPONIBLE 20,69
-IVA 3,22
-El JSON correcto debe ser:  
-{
-  "subtotal": "20,69€",
-  "iva": "3,22€",
-  "total": "23,91€",
-  "productos": [
-    { "cantidad": 1, "nombre": "5 BOCADILLOS", "precio_unitario": "1,19€", "precio_total": "1,19€", "categoria": "Alimentación" },
-    { "cantidad": 2, "nombre": "PAN DE MOLDE", "precio_unitario": "1,50€", "precio_total": "3,00€", "categoria": "Alimentación" }
-  ]
-}
+\`\`\`
 
 📌 **Aquí está el ticket real que debes analizar:**  
 ${text}

@@ -27,16 +27,13 @@ export class OCRSpaceService implements IOCRService {
       ) as OcrSpaceResponse;
 
       logger.info('OCR request completed');
+      if (responseOCR.ParsedResults.length <= 0 || !responseOCR.ParsedResults[0]?.ParsedText) throw new OCRProcessingError("OCR processing failed. No processed text returned");
 
-      return responseOCR;
+      return responseOCR.ParsedResults[0].ParsedText;
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        logger.error(`OCR error: ${error.message}`);
-        throw new OCRProcessingError("OCR processing failed. Please try again.");
-      } else {
-        logger.error(`OCR error: ${error}`);
-        throw new OCRProcessingError("OCR processing failed. Please try again.");
-      }
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`OCR error: ${errorMessage}`);
+      throw new OCRProcessingError("OCR processing failed. Please try again.");
     } finally {
       if (imagePath) {
         // Eliminar la imagen después del procesamiento
