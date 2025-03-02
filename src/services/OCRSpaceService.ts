@@ -1,44 +1,61 @@
-import { ocrSpace } from "ocr-space-api-wrapper";
+import fs from 'fs';
+import { ocrSpace, OcrSpaceResponse } from "ocr-space-api-wrapper";
 import { IOCRService } from "../interfaces/IOCRService";
 import logger from "../utils/logger";
-import { DownloadImageService } from "./DownloadImageService";
-import fs from 'fs';
-
+import { ImagesService } from "./DownloadImageService";
 
 export class OCRSpaceService implements IOCRService {
-    async extractText(imageUrl: string): Promise<string | object> {
-        try {
-            logger.info(`Downloading image: ${imageUrl}`);
-      
-            // Descargar la imagen y guardarla temporalmente
-            const imagePath = await DownloadImageService.downloadImage(imageUrl);
+  async extractText(imageUrl: string): Promise<string | object> {
+    let imagePath: string | undefined;
+    try {
+      logger.info(`Downloading image: ${imageUrl}`);
 
-            const OCRSpaceApiKey = process.env["OCRSpace_API_KEY"];
-            if(!OCRSpaceApiKey) throw new Error("No OCR Space API Key found");
-      
-            // Procesar la imagen con OCR
-            const responseOCR = await ocrSpace(imagePath, )
-      
-            // Eliminar la imagen después del procesamiento
-            fs.unlinkSync(imagePath);
-      
-            return responseOCR;
-          } catch (error: unknown) {
-            if (error instanceof Error) {
-              logger.error(`OCR error: ${error.message}`);
-              throw new OCRProcessingError("OCR processing failed. Please try again.");
-            } else {
-              logger.error(`OCR error: ${error}`);
-              throw new OCRProcessingError("OCR processing failed. Please try again.");
-            }
-          }
+      // Descargar la imagen y guardarla temporalmente
+      imagePath = await ImagesService.downloadImage(imageUrl);
+
+      logger.info(`Image saved: ${imagePath}`);
+
+      const OCRSpaceApiKey = process.env["OCRSpace_API_KEY"];
+      if (!OCRSpaceApiKey) throw new Error("No OCR Space API Key found");
+
+      logger.info('Sending OCR request');
+
+      // Procesar la imagen con OCR con un límite de tiempo
+      const responseOCR = await this.processWithTimeout(
+        ocrSpace(imagePath, { apiKey: OCRSpaceApiKey }),
+        3000
+      ) as OcrSpaceResponse;
+
+      logger.info('OCR request completed');
+
+      return responseOCR;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        logger.error(`OCR error: ${error.message}`);
+        throw new OCRProcessingError("OCR processing failed. Please try again.");
+      } else {
+        logger.error(`OCR error: ${error}`);
+        throw new OCRProcessingError("OCR processing failed. Please try again.");
+      }
+    } finally {
+      if (imagePath) {
+        // Eliminar la imagen después del procesamiento
+        await ImagesService.deleteImage(imagePath);
+      }
     }
-    
+  }
+
+  private async processWithTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("OCR request timed out")), timeoutMs)
+    );
+    return Promise.race([promise, timeout]);
+  }
 }
 
 class OCRProcessingError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "OCRProcessingError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = "OCRProcessingError";
+  }
 }

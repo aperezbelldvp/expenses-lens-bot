@@ -15,11 +15,11 @@ export class TicketService {
         logger.info(`🔍 Procesando ticket desde: ${imageUrl}`);
 
         // Extraer el texto del ticket con OCR
-        const extractedText = await this.ocrService.extractText(imageUrl);
-
+        const ocrExtract = await this.ocrService.extractText(imageUrl);
+        
         // En este punto, podemos aplicar procesamiento del texto extraído
-        logger.info(`Info extract with OCR:\n${extractedText}`);
-        const processIAData = await this.aiService.analyzeReceipt(JSON.stringify(extractedText));
+        logger.info(`Info extract with OCR:\n${JSON.stringify(ocrExtract)}`);
+        const processIAData = await this.aiService.analyzeReceipt(JSON.stringify(ocrExtract));
 
         return JSON.stringify(processIAData);
     }

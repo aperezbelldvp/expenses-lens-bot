@@ -36,7 +36,6 @@
   },
   "homepage": "https://github.com/aperezbelldvp/expenses-lens-bot#readme",
   "dependencies": {
-    "@google-cloud/vision": "^4.3.2",
     "@prisma/client": "^6.3.1",
     "@types/cors": "^2.8.17",
     "axios": "^1.7.9",
@@ -47,7 +46,6 @@
     "helmet": "^8.0.0",
     "ocr-space-api-wrapper": "^2.3.2",
     "openai": "^4.85.3",
-    "supabase": "^2.12.1",
     "telegraf": "^4.16.3",
     "tesseract.js": "^6.0.0",
     "winston": "^3.17.0",
