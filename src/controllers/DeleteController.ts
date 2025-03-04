@@ -12,14 +12,15 @@ export class DeleteController {
 
   async handlerDeleteCommand(ctx: Context): Promise<void> {
     try {
-      console.log(ctx.message)
+      console.log(ctx.message);
       const telegramId = ctx.message?.chat.id;
       if (!telegramId) throw new Error("No telegram Id.");
       await this.userService.deleteUser(telegramId);
 
       ctx.reply("Tu usuario ha sido eliminado correctamente.");
-    } catch (error: any) {
-      logger.error(`Error eliminando usuario: ${error}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`Error eliminando usuario: ${errorMessage}`);
       errorMiddleware(error, undefined, undefined, undefined, ctx);
     }
   }

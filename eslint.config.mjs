@@ -21,8 +21,19 @@ export default [
       ...tseslint.configs.recommended.rules,
       ...prettierConfig.rules,
       "prettier/prettier": "error",
-      "no-unused-vars": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
+      "no-unused-vars": "off", // Desactiva la versión estándar de ESLint
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          args: "after-used",
+          argsIgnorePattern: "^_", // Ignora argumentos que empiezan con "_"
+          caughtErrors: "all",
+          caughtErrorsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+          varsIgnorePattern: "^T$",// Ignorar `T` como genérico
+        },
+      ],
       "import/order": ["warn", { alphabetize: { order: "asc" } }],
     },
   },

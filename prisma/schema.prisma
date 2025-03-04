@@ -19,4 +19,46 @@ model User {
   createdAt     DateTime @default(now())        // Fecha de registro
   updatedAt     DateTime @updatedAt             // Última modificación (actualiza automáticamente)
   lastActiveAt  DateTime @default(now())        // Última conexión
+
+  receipts      Receipt[]                       // Relación con los tickets
+}
+
+model Receipt {
+  id            String   @id @default(uuid())  // Identificador único del ticket
+  userId        String   @map("user_id")      // Usuario que envió el ticket
+  user          User     @relation(fields: [userId], references: [id]) // Relación con User
+
+  storeName     String                          // Nombre del establecimiento
+  date          DateTime                        // Fecha del ticket
+  iva           Float                   // IVA total
+  total         Float                   // Total con IVA
+  subtotal      Float                   // Subtotal sin IVA
+
+  createdAt     DateTime @default(now())        // Fecha de almacenamiento
+  updatedAt     DateTime @updatedAt             // Última modificación
+
+  items         ReceiptItem[]                   // Relación con productos en el ticket
+}
+
+model ReceiptItem {
+  id            String   @id @default(uuid())  // Identificador único del producto
+  receiptId     String   @map("receipt_id")   // Ticket al que pertenece
+  receipt       Receipt  @relation(fields: [receiptId], references: [id]) // Relación con Receipt
+
+  name          String                         // Nombre del producto
+  category      String?                        // Categoría del producto (opcional)
+  quantity      Int                            // Cantidad comprada
+  unitPrice     Float                 // Precio unitario
+  totalPrice    Float                          // Precio total (cantidad * unitPrice)
+
+  createdAt     DateTime @default(now())       // Fecha de almacenamiento
+  updatedAt     DateTime @updatedAt            // Última modificación
+}
+
+model Category {
+  id            String   @id @default(uuid())  // Identificador único de la categoría
+  name          String   @unique               // Nombre de la categoría
+
+  createdAt     DateTime @default(now())       // Fecha de almacenamiento
+  updatedAt     DateTime @updatedAt            // Última modificación
 }

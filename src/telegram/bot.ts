@@ -1,10 +1,10 @@
 import { Telegraf } from "telegraf";
 import config from "../config";
+import { contextMiddleware } from "../middlewares/contextMiddleware";
 import errorMiddleware from "../middlewares/errorMiddleware";
 import logger from "../utils/logger";
 import { registerCommands } from "./commands";
 import { registerDocument, registerMessage } from "./messages";
-import { contextMiddleware } from "../middlewares/contextMiddleware";
 
 const bot = new Telegraf(config.TELEGRAM_BOT_TOKEN);
 
@@ -22,7 +22,7 @@ export const startBot = async () => {
     registerCommands(bot);
 
     // Fotos o PDF
-    registerDocument(bot)
+    registerDocument(bot);
 
     // Mensajes
     registerMessage(bot);

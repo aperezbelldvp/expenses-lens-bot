@@ -2,21 +2,30 @@ import { NextFunction, Request, Response } from "express";
 import { Context } from "telegraf";
 import logger from "../utils/logger";
 
+// Definir una interfaz para errores con código de estado opcional
+interface CustomError extends Error {
+  statusCode?: number;
+}
+
 // Middleware para manejar errores en Express y Telegram
 const errorMiddleware = (
-  err: any,
+  err: unknown,
   req?: Request,
   res?: Response,
   next?: NextFunction,
   ctx?: Context,
 ) => {
-  logger.error(`❌ Error: ${err.message || "Unknown error"}`);
+  const errorMessage = err instanceof Error ? err.message : String(err);
+  logger.error(`❌ Error: ${errorMessage || "Unknown error"}`);
 
   if (res && req) {
-    return res.status(err.statusCode).json({
-      message: err.message,
-      stack: process.env["NODE_ENV"] === "development" ? err.stack : undefined,
-    });
+    if (err instanceof Error) {
+      const statusCode = (err as CustomError).statusCode || 500;
+      return res.status(statusCode).json({
+        message: err.message,
+        stack: process.env["NODE_ENV"] === "development" ? err.stack : undefined,
+      });
+    }
   } else if (ctx) {
     // Cogemos un mensaje de error random
     ctx.reply(funnyResponses[Math.floor(Math.random() * funnyResponses.length)] as string);
@@ -35,7 +44,5 @@ const funnyResponses = [
   "🤖 Bzzzt... *recalculando*... Algo salió mal, pero no sé qué. ¿Lo intentas de nuevo?",
   "🔥 El bot ha explotado... (mentira, pero casi). ¡Prueba otra vez!",
 ];
-
-
 
 export default errorMiddleware;

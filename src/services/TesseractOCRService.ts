@@ -22,13 +22,9 @@ export class TesseractOCRService implements IOCRService {
 
       return data.text;
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        logger.error(`OCR error: ${error.message}`);
-        throw new OCRProcessingError("OCR processing failed. Please try again.");
-      } else {
-        logger.error(`OCR error: ${error}`);
-        throw new OCRProcessingError("OCR processing failed. Please try again.");
-      }
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(`OCR error: ${errorMessage}`);
+      throw new OCRProcessingError("OCR processing failed. Please try again.");
     }
   }
 }

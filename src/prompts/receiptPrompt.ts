@@ -55,9 +55,11 @@ Tu tarea es analizarlo y extraer correctamente la información en JSON siguiendo
 5️⃣ **Formato de salida JSON esperado:**  
 \`\`\`json
 {
+  "supermercado": "Nombre del Supermercado",
   "subtotal": "XX.XX€",
   "iva": "XX.XX€",
   "total": "XX.XX€",
+  "fecha": "fecha de la compra",
   "productos": [
     { "cantidad": X, "nombre": "Producto1", "precio_unitario": "X.XX€", "precio_total": "X.XX€", "categoria": "Categoría" },
     { "cantidad": X, "nombre": "Producto2", "precio_unitario": "X.XX€", "precio_total": "X.XX€", "categoria": "Categoría" }

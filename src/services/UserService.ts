@@ -3,7 +3,10 @@ import { User } from "../models/User";
 import { NotFoundError } from "../utils/AppError";
 
 export class UserService {
-  constructor(private readonly userRepository: IUserRepository) {}
+  private readonly userRepository: IUserRepository;
+  constructor(userRepository: IUserRepository) {
+    this.userRepository = userRepository;
+  }
 
   async registerOrUpdateUser(userData: User): Promise<User> {
     return this.userRepository.createOrUpdateUser(userData);

@@ -8,18 +8,21 @@ import { TesseractOCRService } from "./services/TesseractOCRService";
 import { TicketService } from "./services/TicketService";
 import { UserService } from "./services/UserService";
 
-
 const userRepository = new UserRepository();
 const userService = new UserService(userRepository);
 const startController = new StartController(userService);
 const deleteController = new DeleteController(userService);
-const messageController = new MessagesController()
+const messageController = new MessagesController();
 const tesseractOCRService = new TesseractOCRService();
 const oCRSpaceService = new OCRSpaceService();
-
 
 const aiService = new OpenAIService();
 const ticketService = new TicketService(oCRSpaceService, aiService);
 
-export { deleteController, messageController, tesseractOCRService as ocrService, startController, ticketService };
-
+export {
+  deleteController,
+  messageController,
+  tesseractOCRService as ocrService,
+  startController,
+  ticketService,
+};

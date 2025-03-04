@@ -1,7 +1,6 @@
 import databaseClient from "../database/database";
 import { IUserRepository } from "../interfaces/IUserRepository";
 import { User } from "../models/User";
-import { NotFoundError } from "../utils/AppError";
 
 export class UserRepository implements IUserRepository {
   async findByTelegramId(telegramId: number): Promise<User | null> {
@@ -9,7 +8,6 @@ export class UserRepository implements IUserRepository {
 
     if (!user) return null;
 
-    console.log(user);
     return new User(
       user.telegramId,
       user.isBot,
